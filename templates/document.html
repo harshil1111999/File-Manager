@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container" id="detailPage">
+        <div class="card">
+            <div class="card-header">
+                <h4 id="fileTitle">{{ title }}</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Author:</strong> <span id="fileAuthor">{{ author }}</span></p>
+                <p><strong>Publication Date:</strong> <span id="uploadDate">{{ publication_date }}</span></p>
+                <p><strong>Platform:</strong> <span id="platform">{{ platform }}</span></p>
+                <p><strong>Tags:</strong> <span id="fileTags">{{ tags }}</span></p>
+                <hr>
+                <h5>File Content</h5>
+                <pre id="fileContent" class="file-content"></pre>
+                {% for paragraph in paragraphs %}
+                    <p>{{ paragraph }}</p>
+                {% endfor %}
+                <p><a href="javascript:history.back(1)" class="btn btn-primary">← Back</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

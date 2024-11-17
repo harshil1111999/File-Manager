@@ -1,0 +1,100 @@
+.truncate-overflow {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+mark {
+    background-color: #ffd54f;
+    font-weight: bold;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    background-color: #f8f9fa;
+    padding-top: 20px;
+    min-height: 100vh;
+}
+
+.sidebar h6 {
+    font-weight: bold;
+    color: #495057;
+}
+
+.sidebar .filter-form button {
+    text-align: left;
+    width: 100%;
+    color: #007bff;
+    padding: 5px 0;
+}
+
+.sidebar .filter-form button:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+/* Main Content Styling */
+.main-content {
+    padding: 20px;
+}
+
+.result-item {
+    margin-bottom: 15px;
+}
+
+.result-item h5 {
+    font-size: 1.25rem;
+}
+
+.truncate-overflow {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    /* Limits to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+/* Pagination Controls */
+.pagination .btn {
+    margin-right: 5px;
+}
+
+.file-content {
+    white-space: pre-wrap;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.form-control-clear {
+    position: relative;
+}
+
+.clear-icon {
+    position: absolute;
+    right: 10px; /* Adjust position relative to the delete icon */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+}
+.clear-icon:hover {
+    color: #000;
+}
+
+.delete-icon {
+    cursor: pointer;
+    color: #dc3545; /* Bootstrap danger color */
+}
+
+.delete-icon:hover {
+    color: #b71c1c; /* Darker shade for hover */
+}
+
+.spinner-border {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.2em;
+}
