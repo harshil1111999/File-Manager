@@ -58,7 +58,7 @@
             <h4>Search Files</h4>
         </div>
         <div class="card-body width-100">
-            <form method="POST" class="d-flex" action="{{ url_for('handle_search') }}">
+            <form method="POST" class="d-flex" action="{{ url_for('handle_search') }}" onsubmit="showLoader()">
                 <div class="me-2 form-control-clear" style="width: 100%;">
                     <input type="text" class="form-control" name="query" id="query" placeholder="Search by text in files..." value="{{ query }}" autofocus>
                     <i class="bi bi-x-circle clear-icon" id="clearButton"></i>
@@ -67,68 +67,75 @@
             </form>
         </div>
 
+        <div id="loader" class="text-center d-none">
+          <div class="spinner-border text-primary" role="status">
+            <!-- <span class="sr-only">Loading...</span> -->
+          </div>
+          <p>Loading results...</p>
+        </div>
+
         {% if results %}
-        <div class="container-fluid mt-4">
-            <div class="row">
-              <!-- Sidebar Filter Section -->
-              <div class="col-md-3 col-lg-2 sidebar border-right">
-                <p><a href="javascript:history.back(1)">← Back</a></p>
-                {% for agg in aggs %}
-                  <h6 class="mt-3">{{ agg }}</h6>
-                  {% for key, count in aggs[agg].items() %}
-                    <form method="POST" class="filter-form">
-                      <input type="hidden" name="query" value="{{ agg|lower }}:'{{key}}' {{ query }}">
-                      <button type="submit" class="btn btn-link btn-sm">{{ key }} ({{ count }})</button>
-                    </form>
-                  {% endfor %}
-                {% endfor %}
-              </div>
-          
-              <!-- Main Results Section -->
-              <div class="col-md-9 col-lg-10 main-content">
-                <div class="row mb-3">
-                  <div class="col-auto my-auto">
-                    <p>Showing results {{ from_ + 1 }}-{{ from_ + results|length }} out of {{ total }}.</p>
-                  </div>
-                  <div class="col-auto my-auto">
-                    {% if from_ > 0 %}
-                      <a href="javascript:history.back(1)" class="btn btn-primary">← Previous</a>
-                    {% endif %}
-                    {% if from_ + results|length < total %}
-                      <form method="POST" class="d-inline">
-                        <input type="hidden" name="query" value="{{ query }}">
-                        <input type="hidden" name="from_" value="{{ from_ + results|length }}">
-                        <button type="submit" class="btn btn-primary">Next →</button>
-                      </form>
-                    {% endif %}
-                  </div>
+        <div id="results-container" class="container-fluid mt-4">
+          <div class="row">
+            <!-- Sidebar Filter Section -->
+            <div class="col-md-3 col-lg-2 sidebar border-right">
+              <p><a href="javascript:history.back(1)">← Back</a></p>
+              {% for agg in aggs %}
+              <h6 class="mt-3">{{ agg }}</h6>
+              {% for key, count in aggs[agg].items() %}
+              <form method="POST" class="filter-form">
+                <input type="hidden" name="query" value="{{ agg|lower }}:'{{key}}' {{ query }}">
+                <button type="submit" class="btn btn-link btn-sm">{{ key }} ({{ count }})</button>
+              </form>
+              {% endfor %}
+              {% endfor %}
+            </div>
+        
+            <!-- Main Results Section -->
+            <div class="col-md-9 col-lg-10 main-content">
+              <div class="row mb-3">
+                <div class="col-auto my-auto">
+                  <p>Showing results {{ from_ + 1 }}-{{ from_ + results|length }} out of {{ total }}.</p>
                 </div>
-          
-                <!-- Results List -->
-                {% for result in results %}
-                  <div class="result-item border-bottom py-3">
-                    <h5 class="d-flex justify-content-between">
-                      <a href="{{ url_for('get_document', id=result._id) }}">{{ result._source.title }}</a>
-                      <i class="bi bi-trash delete-icon" id="deleteButton" data-bs-toggle="modal" onclick="setDeleteDocument('{{result._id}}')" data-bs-target="#deleteModal"></i>
-                    </h5>
-                    <div class="truncate-overflow">
-                      {{ result.highlighted_content_inline | safe }}
-                    </div>
-                    <small class="text-muted">
-                      Publication Date: {{ result._source.publication_date }}
-                      {% if result._score %} | Score: {{ result._score }}{% endif %}
-                    </small>
-                    <small class="text-muted">
-                      Author: {{ result._source.author }}
-                    </small>
-                    <small class="text-muted">
-                      Platform: {{ result._source.platform }}
-                    </small>
-                  </div>
-                {% endfor %}
+                <div class="col-auto my-auto">
+                  {% if from_ > 0 %}
+                  <a href="javascript:history.back(1)" class="btn btn-primary">← Previous</a>
+                  {% endif %}
+                  {% if from_ + results|length < total %} <form method="POST" class="d-inline">
+                    <input type="hidden" name="query" value="{{ query }}">
+                    <input type="hidden" name="from_" value="{{ from_ + results|length }}">
+                    <button type="submit" class="btn btn-primary">Next →</button>
+                    </form>
+                    {% endif %}
+                </div>
               </div>
+        
+              <!-- Results List -->
+              {% for result in results %}
+              <div class="result-item border-bottom py-3">
+                <h5 class="d-flex justify-content-between">
+                  <a href="{{ url_for('get_document', id=result._id) }}">{{ result._source.title }}</a>
+                  <i class="bi bi-trash delete-icon" id="deleteButton" data-bs-toggle="modal"
+                    onclick="setDeleteDocument('{{result._id}}')" data-bs-target="#deleteModal"></i>
+                </h5>
+                <div class="truncate-overflow">
+                  {{ result.highlighted_content_inline | safe }}
+                </div>
+                <small class="text-muted">
+                  Publication Date: {{ result._source.publication_date }}
+                  {% if result._score %} | Score: {{ result._score }}{% endif %} |
+                </small>
+                <small class="text-muted">
+                  Author: {{ result._source.author }} |
+                </small>
+                <small class="text-muted">
+                  Platform: {{ result._source.platform }}
+                </small>
+              </div>
+              {% endfor %}
             </div>
           </div>
+        </div>
           
         {% elif request.method == 'POST' %}
             <p>No results found.</p>

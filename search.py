@@ -8,26 +8,15 @@ load_dotenv()
 ES_HOST = "https://localhost:9200"
 ES_USERNAME = "elastic"
 ES_PASSWORD = "tTY-*Red_Tui+sMTpvyc"
+CA_CERT_PATH = 'http_ca.crt'
 INDEX_NAME = "research_documents"
 
 class Search:
-    def __init__(self):
+    def __init__(self, mapping={}, index_name=INDEX_NAME):
         # self.es = Elasticsearch(cloud_id=os.environ['ELASTIC_CLOUD_ID'], api_key=os.environ['ELASTIC_API_KEY'])
-        self.es = Elasticsearch(ES_HOST, basic_auth=(ES_USERNAME, ES_PASSWORD), ca_certs='http_ca.crt')
-        self.index_name = INDEX_NAME
-        self.mapping = {
-            "mappings": {
-                "properties": {
-                    "title": {"type": "text"},
-                    "filename": {"type": "text"},
-                    "author": {"type": "keyword"},
-                    "content": {"type": "text"},
-                    "tags": {"type": "keyword"},
-                    "publication_date": {"type": "date"},
-                    "platform": {"type": "keyword"}
-                }
-            }
-        }
+        self.es = Elasticsearch(ES_HOST, basic_auth=(ES_USERNAME, ES_PASSWORD), ca_certs=CA_CERT_PATH)
+        self.index_name = index_name
+        self.mapping = mapping
         client_info = self.es.info()
         print('Connected to Elasticsearch!')
         pprint(client_info.body)
@@ -42,17 +31,8 @@ class Search:
     def delete_index(self, name):
         self.es.indices.delete(index=name, ignore_unavailable=True)
 
-    def insert_document(self, title, filename, author, content, tags, publication_date, platform):
-        document = {
-            'title': title,
-            'filename': filename,
-            'author': author,
-            'content': content,
-            'tags': tags,
-            'publication_date': publication_date,
-            'platform': platform
-        }
-        return self.es.index(index=self.index_name, body=document)
+    def insert_document(self, body):
+        return self.es.index(index=self.index_name, body=body)
     
     def delete_document(self, doc_id):
         try:

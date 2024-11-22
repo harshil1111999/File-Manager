@@ -6,7 +6,21 @@ import click
 from datetime import date, datetime
 
 app = Flask(__name__)
-es = Search()
+mapping = {
+    "mappings": {
+        "properties": {
+            "title": {"type": "text"},
+            "filename": {"type": "text"},
+            "author": {"type": "keyword"},
+            "content": {"type": "text"},
+            "tags": {"type": "keyword"},
+            "publication_date": {"type": "date"},
+            "platform": {"type": "keyword"}
+        }
+    }
+}
+index_name = 'research_documents'
+es = Search(mapping, index_name)
 
 @app.get('/')
 def index():
@@ -30,9 +44,19 @@ def handle_file_upload():
     # Read PDF content
     pdf_text = extract_text_from_pdf(file)
     try:
-        es.insert_document(form.get('title', ''), file.filename, form.get('author', ''), pdf_text, form.get('tags', ''), form.get('publication_date'), form.get('platform'))
+        body = {
+            'title': form.get('title', ''),
+            'filename': file.filename,
+            'author': form.get('author', ''),
+            'content': pdf_text,
+            'tags': form.get('tags', ''),
+            'publication_date': form.get('publication_date'),
+            'platform': form.get('platform')
+        }
+        es.insert_document(body)
         return 'Inserted Successfully', 200
-    except:
+    except Exception as e:
+        print(e)
         return 'Failed to Process', 500
 
 def extract_text_from_pdf(file):
@@ -98,10 +122,14 @@ def handle_search():
         },
         highlight={
             "fields": {
-                "content": { }
+                "content": {
+                    "fragment_size": 500, 
+                    "number_of_fragments": 3
+                }
             },
             "pre_tags": ["<mark>"], 
-            "post_tags": ["</mark>"]
+            "post_tags": ["</mark>"],
+            "max_analyzed_offset":1000000,
         },
         size=5,
         from_=from_
@@ -133,11 +161,11 @@ def handle_search():
         highlighted_content_inline = original_content  # Start with the original content
 
         # Replace matched terms inline with highlighted terms
+        highlighted_fragments.sort(key=lambda x: len(x), reverse=True)
         for fragment in highlighted_fragments:
             # Remove <mark> tags for regex compatibility, then escape for regex search
             fragment_text = re.sub(r'<\/?mark>', '', fragment)
             highlighted_content_inline = re.sub(re.escape(fragment_text), fragment, highlighted_content_inline, flags=re.IGNORECASE)
-
         results['hits']['hits'][idx]['highlighted_content_inline'] = highlighted_content_inline
 
 

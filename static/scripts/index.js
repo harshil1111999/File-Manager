@@ -1,5 +1,7 @@
 const deleteButton = document.getElementById('deleteButton');
 const confirmDeleteButton = document.getElementById('confirmDelete');
+const loader = document.getElementById("loader");
+const resultsContainer = document.getElementById("results-container");
 let deleteDocId;
 
 function setDeleteDocument(doc_id) {
@@ -23,7 +25,7 @@ function submitForm() {
     fetch('/upload_file', {
         method: 'POST',
         body: formData
-    }).then(data => {
+    }).then(response => {
         if (!response.ok) {
             return response.json().then(err => {
                 throw new Error(err.message || "Unknown error occurred");
@@ -57,6 +59,11 @@ function closeModal() {
     if (backdrop) {
         backdrop.remove();
     }
+}
+
+function showLoader() {
+    // Show the loader
+    document.getElementById("loader").classList.remove("d-none");
 }
 
 document.getElementById('clearButton').addEventListener('click', function () {
