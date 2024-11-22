@@ -2,14 +2,15 @@ import json
 from pprint import pprint
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch, NotFoundError
+import os
 
 load_dotenv()
 
-ES_HOST = "https://localhost:9200"
-ES_USERNAME = "elastic"
-ES_PASSWORD = "tTY-*Red_Tui+sMTpvyc"
-CA_CERT_PATH = 'http_ca.crt'
-INDEX_NAME = "research_documents"
+ES_HOST = os.environ['ES_HOST']
+ES_USERNAME = os.environ['ES_USERNAME']
+ES_PASSWORD = os.environ['ES_PASSWORD']
+CA_CERT_PATH = os.environ['CA_CERT_PATH']
+INDEX_NAME = os.environ['INDEX_NAME']
 
 class Search:
     def __init__(self, mapping={}, index_name=INDEX_NAME):
