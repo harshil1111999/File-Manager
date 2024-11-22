@@ -1,6 +1,8 @@
-# Elasticsearch Search Tutorial
+# Research Document Manager
 
-This directory contains a starter Flask project used in the Search tutorial.
+In this tool users can upload the research documents and also can provide metadata about the document such as author, platform, publication date and also I am extracting content from uploaded documents and saving all these details in elasticsearch. After this user can search for keyword, so for example if user wants to search for all the research document related to “Distributed Database System” they will search it as keyword in search bar and tool will provide the best matching documents and also by clicking on individual records user will be able to read through the document as well. Also I have aggregated data based on platform, author and publication year so users can apply individual filters as well on search.
+
+![image](https://github.com/user-attachments/assets/cda94749-d8e9-4186-8209-1412f561aabc)
 
 ## Setup steps
 
